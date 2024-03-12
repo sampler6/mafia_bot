@@ -4,6 +4,7 @@ class Settings:
     traits: list = ['name', 'about', 'job', 'relation', 'behavior', 'hobby', 'dark_side', 'gift',
                     'additional', 'first_fact', 'second_fact', 'third_fact']
     is_poll_open: bool = False
+    is_final_poll: bool = False
     current_poll_users: dict = {}
     current_poll_voted_users: list = []
     users: dict = {}

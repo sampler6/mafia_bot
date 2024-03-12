@@ -56,12 +56,37 @@ async def start_poll(message: Message):
                                    reply_markup=kb.as_markup(resize_keyboard=True))
 
 
+@dp.message(F.text.startswith("/final_poll"),
+            F.chat.id == ADMIN)
+async def final_poll(message: Message):
+    kb = InlineKeyboardBuilder()
+    if settings.is_poll_open:
+        await message.answer("Вы не завершили прошлое голосование. /end_poll")
+        return
+    async with async_session() as session:
+        kb.button(text="Продолжаем", callback_data=f'AFBDFsplayer0')
+        kb.button(text="Заканчиваем", callback_data=f'AFBDFsplayer1')
+        settings.current_poll_users[0] = 0
+        settings.current_poll_users[1] = 0
+        settings.is_poll_open = True
+        settings.is_final_poll = True
+        query = select(TG.tg_id)
+        result = (await session.execute(query)).scalars().all()
+        kb.adjust(2)
+        for user in result:
+            await bot.send_message(user, text="Началось голосование. Продолжаем или заканчиваем?",
+                                   reply_markup=kb.as_markup(resize_keyboard=True))
+
+
 @dp.message(F.text.startswith("/show_poll"),
             F.chat.id == ADMIN)
 async def show_poll(message: Message):
     ans = ""
     for player in settings.current_poll_users:
-        ans += f"{names[player-1]}: {settings.current_poll_users[player]} голосов\n"
+        if not settings.is_final_poll:
+            ans += f"{names[player - 1]}: {settings.current_poll_users[player]} голосов\n"
+        else:
+            ans += f"{'Продолжаем' if player == 0 else 'Заканчиваем'}: {settings.current_poll_users[player]} голосов\n"
     await message.answer(ans)
 
 
@@ -70,11 +95,15 @@ async def show_poll(message: Message):
 async def end_poll(message: Message):
     ans = ""
     for player in settings.current_poll_users:
-        ans += f"{names[player-1]}: {settings.current_poll_users[player]} голосов\n"
+        if not settings.is_final_poll:
+            ans += f"{names[player-1]}: {settings.current_poll_users[player]} голосов\n"
+        else:
+            ans += f"{'Продолжаем' if player==0 else 'Заканчиваем'}: {settings.current_poll_users[player]} голосов\n"
     await message.answer(ans)
     settings.current_poll_voted_users = []
     settings.current_poll_users = {}
     settings.is_poll_open = False
+    settings.is_final_poll = False
 
 
 async def bot_main():

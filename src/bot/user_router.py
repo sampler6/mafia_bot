@@ -44,6 +44,7 @@ async def get_token(message: Message):
         result = result.first()
         if result[1]:
             await message.answer("Роль уже занята")
+            return
 
         query = select(TG.__table__.c.tg_id, TG.__table__.c.id).where(TG.tg_id == str(message.from_user.id))
         result = await session.execute(query)
