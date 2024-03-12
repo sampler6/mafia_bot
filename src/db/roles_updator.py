@@ -2,15 +2,15 @@ import csv
 import string
 
 from sqlalchemy import delete, insert
-from src.db.database import async_session
-from src.db.tables import Roles
+from db.database import async_session
+from db.tables import Roles
 
 
 async def update_roles():
     columns: list[list] = []
     async with async_session() as session:
         await session.execute(delete(Roles).where(Roles.__table__.c.role_id != -1))
-        with open("src/data.csv") as data:
+        with open("data.csv") as data:
             reader = csv.reader(data, delimiter=';')
             for i in range(0, 11):
                 columns.append([])

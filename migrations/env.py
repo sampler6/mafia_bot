@@ -3,8 +3,8 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from src.config import DB_PASS, DB_NAME, DB_PORT, DB_USER, DB_HOST
-from src.db.tables import Base
+from config import DB_PASS, DB_NAME, DB_PORT, DB_USER, DB_HOST
+from db.tables import Base
 from alembic import context
 
 # this is the Alembic Config object, which provides

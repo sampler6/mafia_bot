@@ -15,7 +15,7 @@ from config import ADMIN, TOKEN
 from db.database import async_session
 from db.tables import TG, Roles
 from settings import settings
-from src.db.roles_updator import update_roles
+from db.roles_updator import update_roles
 
 
 dp = Dispatcher()
